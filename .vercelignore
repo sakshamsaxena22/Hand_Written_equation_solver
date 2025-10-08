@@ -1,0 +1,98 @@
+# Development and Virtual Environment
+venv/
+env/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+
+# Jupyter Notebooks
+*.ipynb
+.ipynb_checkpoints/
+
+# Training and Model Files
+train_model.py
+scripts/train_model.py
+*.pth
+*.pt
+*.ckpt
+*.weights
+*.h5
+src/models/pretrained/
+
+# Data Files
+data/
+test_images/
+uploads/
+
+# Testing
+tests/
+test_*.py
+*_test.py
+pytest.ini
+.pytest_cache/
+
+# Documentation
+docs/
+*.md
+!README.md
+PROJECT_*.md
+
+# IDE and Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS Files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+deployment/
+
+# Logs
+logs/
+*.log
+
+# Original/backup files
+*_original.py
+*_backup.py
+
+# Config files that shouldn't be deployed
+.env.local
+.env.development
+.env.test
+
+# Heavy dependencies (using requirements-vercel.txt instead)
+requirements.txt
+
+# Demo and setup scripts
+demo_solver.py
+create_test_images.py
+setup_project.py
+setup.py
+test_system.py
+
+# Web app (if using separate hosting)
+web_app.py
+templates/
+web/
+
+# GitHub workflows
+.github/
+github/
+

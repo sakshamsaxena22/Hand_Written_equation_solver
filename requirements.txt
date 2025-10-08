@@ -1,3 +1,8 @@
+# ==============================================================================
+# LOCAL DEVELOPMENT ONLY - NOT USED FOR VERCEL DEPLOYMENT
+# For Vercel deployment, see requirements-vercel.txt (minimal dependencies)
+# ==============================================================================
+
 # Core Dependencies
 numpy>=1.21.0
 opencv-python>=4.5.0
