@@ -1,0 +1,66 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info
+dist
+build
+venv/
+env/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Jupyter
+*.ipynb
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs and temp files
+*.log
+logs/
+uploads/
+*.tmp
+
+# Documentation
+*.md
+!README.md
+docs/
+
+# Testing
+tests/
+test_*.py
+*_test.py
+pytest.ini
+.pytest_cache/
+
+# Vercel specific (not needed for Azure)
+.vercel
+.vercelignore
+vercel.json
+requirements-vercel.txt
+
+# Azure (will be created during deployment)
+.azure/
+
+# Data files that aren't needed in container
+test_images/
+data/vocabularies/
+deployment/
