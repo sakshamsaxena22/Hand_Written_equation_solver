@@ -1,0 +1,76 @@
+name: Deploy to Azure App Service
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  AZURE_WEBAPP_NAME: equation-solver-app
+  AZURE_CONTAINER_REGISTRY: equationsolver
+  IMAGE_NAME: equation-solver
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v3
+    
+    - name: 🔐 Log in to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    
+    - name: 🐳 Log in to Azure Container Registry
+      uses: azure/docker-login@v1
+      with:
+        login-server: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io
+        username: ${{ secrets.ACR_USERNAME }}
+        password: ${{ secrets.ACR_PASSWORD }}
+    
+    - name: 🏗️ Build and push Docker image
+      run: |
+        echo "Building Docker image..."
+        docker build -t ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} \
+                     -t ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.IMAGE_NAME }}:latest .
+        
+        echo "Pushing Docker image..."
+        docker push ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
+        docker push ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.IMAGE_NAME }}:latest
+    
+    - name: 🚀 Deploy to Azure Web App
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: ${{ env.AZURE_WEBAPP_NAME }}
+        images: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
+    
+    - name: 🧪 Test deployment
+      run: |
+        echo "Waiting for app to start..."
+        sleep 60
+        
+        echo "Testing health check..."
+        response=$(curl -s -o /dev/null -w "%{http_code}" https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net/health)
+        
+        if [ $response -eq 200 ]; then
+          echo "✅ Health check passed!"
+          curl https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net/health
+        else
+          echo "❌ Health check failed with status code: $response"
+          exit 1
+        fi
+    
+    - name: 📊 Deployment summary
+      if: success()
+      run: |
+        echo "### ✅ Deployment Successful! 🎉" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**Application URLs:**" >> $GITHUB_STEP_SUMMARY
+        echo "- 🏠 Home: https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net/" >> $GITHUB_STEP_SUMMARY
+        echo "- 🧪 Demo: https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net/demo" >> $GITHUB_STEP_SUMMARY
+        echo "- 📚 API Docs: https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net/docs" >> $GITHUB_STEP_SUMMARY
+        echo "- 💚 Health: https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net/health" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**Image:** \`${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
